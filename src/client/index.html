@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NEON VEIL — Combat Lab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div id="game"></div>
+
+    <div id="hud" class="hidden">
+      <div id="objective">
+        <div class="label">CONTRACT</div>
+        <div id="objective-text">COMBAT LAB — survive and test your build</div>
+        <div id="objective-sub"></div>
+      </div>
+
+      <div id="timelayer">
+        <div id="tl-world">WORLD <b>1.00×</b></div>
+        <div id="tl-self">YOU <b>1.00×</b></div>
+        <div id="tl-banner"></div>
+      </div>
+
+      <canvas id="minimap" width="200" height="134"></canvas>
+
+      <div id="feed"></div>
+      <div id="notices"></div>
+
+      <div id="vitals">
+        <div class="bar-row"><span class="tag">HP</span><div class="bar"><div id="hp-fill" class="fill hp"></div></div><span id="hp-num" class="num"></span></div>
+        <div class="bar-row"><span class="tag">ARM</span><div class="bar"><div id="armor-fill" class="fill armor"></div></div><span id="armor-num" class="num"></span></div>
+        <div class="bar-row"><span id="os-tag" class="tag">RFX</span><div class="bar"><div id="os-fill" class="fill reflex"></div></div><span id="os-num" class="num"></span></div>
+        <div id="os-name"></div>
+        <div id="status-row"></div>
+      </div>
+
+      <div id="loadout">
+        <div id="weapon-slots"></div>
+        <div id="ammo"><span id="ammo-num">12</span><span id="ammo-max">/12</span></div>
+        <div id="weapon-name"></div>
+        <div id="consumables"></div>
+      </div>
+
+      <div id="hackmenu" class="hidden"></div>
+      <div id="overlay-center" class="hidden"></div>
+
+      <div id="help">
+        <div class="help-title">CONTROLS <span class="dim">[H]ide</span></div>
+        <div><b>WASD</b> move · <b>Shift</b> sprint · <b>C</b> crouch (while sprinting = slide)</div>
+        <div><b>Mouse</b> aim · <b>LMB</b> fire / slash (hold = heavy) · <b>RMB</b> aim / block+parry</div>
+        <div><b>Space</b> dash · <b>R</b> reload · <b>1–4</b> weapons · <b>G</b> frag · <b>X</b> trauma injector</div>
+        <div><b>F</b> PHASE DRIVE (tap again to exit early) · <b>Q</b>+<b>1–6</b> quickhack (Ghost Deck)</div>
+        <div><b>E</b> (hold) revive teammate</div>
+        <div class="help-title lab">LAB</div>
+        <div><b>B</b> enemies on/off · <b>N</b> spawn wave · <b>K</b> bullet curtain · <b>O</b> swap OS · <b>P</b> PvP · <b>V</b> damage numbers</div>
+      </div>
+    </div>
+
+    <div id="join">
+      <div class="join-card">
+        <div class="logo">NEON<span>VEIL</span></div>
+        <div class="tagline">VEYRA · THE STACKS · LOT 17 — COMBAT LAB</div>
+        <label>HANDLE<input id="name" maxlength="16" placeholder="merc" autocomplete="off" /></label>
+        <div class="os-label">NEURAL OS</div>
+        <div class="os-choices">
+          <button class="os-choice selected" data-os="phase">
+            <div class="os-title">PHASE DRIVE</div>
+            <div class="os-desc">Enter the fast time layer. The world runs at 0.22×, and so do its bullets. You don't.</div>
+          </button>
+          <button class="os-choice" data-os="ghost">
+            <div class="os-title">GHOST DECK</div>
+            <div class="os-desc">Combat quickhacks over the Civic Mesh. Blind, lock, jam, spike, burn, and drain reflex users.</div>
+          </button>
+        </div>
+        <button id="join-btn">JACK IN</button>
+        <div id="join-status"></div>
+        <div class="join-foot">Open a second tab to test multiplayer Phase duels.</div>
+      </div>
+    </div>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

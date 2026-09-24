@@ -1,0 +1,31 @@
+{
+  "name": "neon-veil",
+  "version": "0.1.0",
+  "private": true,
+  "description": "NEON VEIL — top-down cyberpunk action RPG. Phase 1/2 combat lab: server-authoritative multiplayer with time dilation.",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "dev:server": "tsx watch src/server/index.ts",
+    "dev:client": "vite",
+    "build": "vite build",
+    "start": "tsx src/server/index.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "pixi.js": "^8.21.0",
+    "ws": "^8.21.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.2",
+    "@types/ws": "^8.18.1",
+    "tsx": "^4.23.15",
+    "typescript": "~5.9",
+    "vite": "^8.3.1",
+    "vitest": "^5.0.1"
+  }
+}
