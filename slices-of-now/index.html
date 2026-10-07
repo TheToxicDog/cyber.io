@@ -1,0 +1,1924 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+</head>
+<body>
+<title>Slices of Now</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one long reading column (66ch) interrupted by full-width "plates".
+   Each plate = a 3D stage, a Flatland side panel and a control bar.
+   The hot pink "now" color marks every slice on the page and nothing else. */
+:root {
+  --paper: #ECEFF3;
+  --surface: #F7F8FA;
+  --stage: #DCE2EA;
+  --floor: #CDD5DF;
+  --flat: #FAFBFC;
+  --grid: #DFE4EB;
+  --fog: #C5CDD8;
+  --ink: #141922;
+  --muted: #586174;
+  --rule: #C6CEDA;
+  --now: #DB2369;
+  --on-now: #FFFFFF;
+  --o1: #E0A43B;
+  --o2: #2E9C8F;
+  --o3: #4A6CC0;
+  --o4: #86A85A;
+  --o5: #9468BD;
+  --o6: #D9773F;
+  --font-display: "IM Fell English", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0C0F15; --surface: #131821; --stage: #0E131B; --floor: #1C2430; --flat: #10151D;
+    --grid: #1B2230; --fog: #262E3C; --ink: #E4E8EF; --muted: #98A1B3; --rule: #283143;
+    --now: #FF4D95; --on-now: #14070D;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0C0F15; --surface: #131821; --stage: #0E131B; --floor: #1C2430; --flat: #10151D;
+  --grid: #1B2230; --fog: #262E3C; --ink: #E4E8EF; --muted: #98A1B3; --rule: #283143;
+  --now: #FF4D95; --on-now: #14070D;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-inline: clamp(16px, 4vw, 40px);
+  padding-block: clamp(28px, 6vw, 64px) 72px;
+}
+a { color: var(--now); }
+.prose { max-width: 66ch; }
+.prose p { margin: 0 0 1em; }
+.prose ul { margin: 0 0 1.2em; padding-left: 1.2em; }
+.prose li { margin-bottom: .45em; }
+.prose li::marker { color: var(--now); }
+em.ui { font-style: normal; font-weight: 600; }
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 6px;
+}
+.dims b { color: var(--ink); font-weight: 500; }
+.dims .op { color: var(--now); padding-inline: .3em; }
+
+h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(3.4rem, 10vw, 7rem);
+  line-height: .9;
+  letter-spacing: -.01em;
+  margin: .08em 0 .3em;
+  text-wrap: balance;
+}
+h1 em { color: var(--now); }
+h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.1rem, 4.8vw, 3.2rem);
+  line-height: 1.04;
+  margin: .1em 0 .55em;
+  text-wrap: balance;
+}
+h3 {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin: 2.2em 0 .7em;
+}
+.lede { font-size: clamp(1.1rem, 2.1vw, 1.3rem); line-height: 1.5; max-width: 60ch; margin: 0 0 .7em; }
+.lede-sub { color: var(--muted); max-width: 60ch; margin: 0; }
+
+section { margin-top: clamp(64px, 10vw, 120px); }
+
+blockquote {
+  margin: 1.6em 0;
+  padding: 2px 0 2px 20px;
+  border-left: 2px solid var(--now);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1.25rem, 2.4vw, 1.5rem);
+  line-height: 1.38;
+}
+blockquote p { margin: 0; }
+blockquote footer {
+  font: 12px/1.4 var(--font-mono);
+  font-style: normal;
+  letter-spacing: .04em;
+  color: var(--muted);
+  margin-top: .7em;
+}
+
+/* plates */
+.plate {
+  margin: 28px 0 36px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.plate-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+.view3d {
+  position: relative;
+  min-height: 460px;
+  background: radial-gradient(130% 100% at 30% 0%, var(--surface), var(--stage));
+  border-right: 1px solid var(--rule);
+  overflow: hidden;
+}
+.view3d canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; outline: none; }
+.view3d.can-grab canvas { cursor: grab; }
+.view3d.grabbing canvas { cursor: grabbing; }
+.hint {
+  position: absolute; left: 12px; right: 12px; bottom: 10px;
+  pointer-events: none;
+  font: 11.5px/1.4 var(--font-mono);
+  color: var(--muted);
+}
+.tag {
+  position: absolute; left: 0; top: 0;
+  font: 11px/1 var(--font-mono);
+  color: var(--muted);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.tag.now { color: var(--now); font-weight: 500; }
+.nogl {
+  position: absolute; inset: 0; margin: 0; display: grid; place-items: center;
+  padding: 24px; text-align: center; color: var(--muted); font-size: 15px;
+}
+
+.side { padding: 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.label {
+  font: 500 11px/1.2 var(--font-mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.note { font-size: 12.5px; color: var(--muted); }
+.flat-canvas {
+  width: 100%; aspect-ratio: 1; max-width: 100%; display: block;
+  border-radius: 8px; border: 1px solid var(--rule);
+  touch-action: none; cursor: crosshair;
+}
+.retina { width: 100%; height: 30px; display: block; border-radius: 4px; border: 1px solid var(--rule); }
+.small { font-size: 13.5px; line-height: 1.5; color: var(--muted); margin: 0; }
+.status { font-size: 13.5px; line-height: 1.5; margin: 0; min-height: 3em; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: var(--muted); margin: 0; padding: 0; list-style: none; }
+.legend span.sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 6px; }
+.sw.solid { background: var(--o2); }
+.sw.glass { background: var(--o2); opacity: .3; }
+.sw.slice { background: var(--now); }
+
+.readout { margin: 0; display: flex; flex-direction: column; gap: 2px; }
+.readout strong { font-family: var(--font-display); font-weight: 400; font-size: 1.7rem; line-height: 1.1; }
+.readout .mono { font: 12.5px/1.4 var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.gauge { width: 100%; height: 66px; display: block; }
+
+fieldset { border: 1px solid var(--rule); border-radius: 10px; margin: 0; padding: 10px 12px 12px; min-width: 0; }
+fieldset[disabled] { opacity: .5; }
+legend { padding: 0 6px; }
+.slider-row { display: grid; grid-template-columns: 3.2em minmax(0, 1fr) 3.6em; align-items: center; gap: 8px; }
+.slider-row label { font: 500 12px/1 var(--font-mono); color: var(--ink); }
+.slider-row input[type=range] { width: 100%; }
+
+.controls {
+  display: flex; flex-wrap: wrap; gap: 12px 22px; align-items: center;
+  padding: 14px 16px;
+  border-top: 1px solid var(--rule);
+}
+.ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-width: 0; }
+.ctl.grow { flex: 1 1 320px; }
+.ctl.grow input[type=range] { flex: 1 1 160px; width: auto; }
+.ctl output, .slider-row output {
+  font: 12.5px/1 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  min-width: 4.4em;
+}
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.btn, .chip {
+  font: 500 14px/1 var(--font-body);
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 9px 12px;
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 7px;
+  white-space: nowrap;
+}
+.chip { padding: 7px 10px; font-size: 13.5px; }
+.chip svg { width: 13px; height: 13px; flex: none; }
+.btn:hover, .chip:hover { border-color: var(--muted); }
+.btn:focus-visible, .chip:focus-visible, .flat-canvas:focus-visible { outline: 2px solid var(--now); outline-offset: 2px; }
+.btn.primary { background: var(--now); border-color: var(--now); color: var(--on-now); }
+.btn.primary:hover { filter: brightness(1.06); }
+.btn[aria-pressed="true"], .chip[aria-checked="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.btn.quiet { background: transparent; }
+.btn:disabled { opacity: .45; cursor: default; }
+
+input[type=range] {
+  -webkit-appearance: none; appearance: none;
+  width: 170px; max-width: 100%; height: 22px;
+  background: transparent; margin: 0;
+}
+input[type=range]::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: var(--rule); }
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+  background: var(--now); margin-top: -6px; border: 2px solid var(--surface);
+  box-shadow: 0 0 0 1px var(--now);
+}
+input[type=range]::-moz-range-track { height: 4px; border-radius: 2px; background: var(--rule); }
+input[type=range]::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; background: var(--now); border: 2px solid var(--surface); }
+input[type=range]:focus-visible { outline: 2px solid var(--now); outline-offset: 3px; border-radius: 4px; }
+
+.table-wrap { overflow-x: auto; margin: 1.4em 0 2em; }
+table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 15px; line-height: 1.45; }
+th, td { text-align: left; padding: 11px 16px 11px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+thead th { font: 500 11px/1.2 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+tbody th { font-weight: 600; width: 26%; }
+td.hi { color: var(--now); font-weight: 500; }
+
+.caveats { list-style: none; padding: 0; margin: 0; display: grid; gap: 18px; }
+.caveats li { padding-left: 16px; border-left: 1px solid var(--rule); }
+.caveats b { display: block; margin-bottom: 2px; }
+
+.closing { margin-top: 56px; }
+footer.credits {
+  margin-top: 72px; padding-top: 18px; border-top: 1px solid var(--rule);
+  font-size: 13px; color: var(--muted); max-width: 80ch;
+}
+
+@media (max-width: 860px) {
+  .plate-grid { grid-template-columns: minmax(0, 1fr); }
+  .view3d { min-height: 0; aspect-ratio: 1 / 1; max-height: 78vh; width: 100%; border-right: 0; border-bottom: 1px solid var(--rule); }
+  .flat-canvas { max-width: 420px; }
+  .controls { gap: 12px 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; }
+}
+</style>
+
+<main>
+  <header class="hero">
+    <p class="eyebrow">Flatland, spacetime and the fourth dimension</p>
+    <h1>Slices of <em>Now</em></h1>
+    <p class="lede">A Flatlander lives on a plane and can only see what lies in it. Push a ball through their world and they watch a circle appear from nowhere, grow, shrink and vanish. Many physicists describe our lives the same way, one dimension up: all of history is a four-dimensional block, and each moment you live through is a three-dimensional slice of it.</p>
+    <p class="lede-sub">The pink sheet below is Flatland. Grab the shapes and push them through it, then follow the idea up a dimension.</p>
+  </header>
+
+  <!-- PLATE I: 3D shapes passing through a 2D world -->
+  <figure class="plate" id="lab" aria-label="Flatland lab: 3D shapes and the 2D world they pass through">
+    <div class="plate-grid">
+      <div class="view3d" id="lab-view">
+        <p class="hint">Drag a shape to throw it · drag empty space to orbit · pinch or Ctrl-scroll to zoom</p>
+      </div>
+      <div class="side">
+        <div class="panel-head">
+          <span class="label">Flatland, seen from above</span>
+          <span class="note">No Flatlander gets this view</span>
+        </div>
+        <canvas class="flat-canvas" id="lab-flat" role="img" aria-label="Top-down view of Flatland showing the cross-section of each shape that crosses it"></canvas>
+        <div class="panel-head">
+          <span class="label">What A Square sees</span>
+        </div>
+        <canvas class="retina" id="lab-retina" role="img" aria-label="A one-dimensional strip: the view from A Square's eye"></canvas>
+        <p class="small">Drag in the map to move A Square (the dark square). He sees one line of color. Nearer edges look brighter because Flatland is foggy.</p>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl">
+        <span class="label" id="lab-shape-label">Shape</span>
+        <div class="chips" role="radiogroup" aria-labelledby="lab-shape-label" id="lab-shapes">
+          <button class="chip" role="radio" aria-checked="true" data-shape="ball"><svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="currentColor"/></svg>Ball</button>
+          <button class="chip" role="radio" aria-checked="false" data-shape="cube"><svg viewBox="0 0 14 14" aria-hidden="true"><rect x="1.5" y="1.5" width="11" height="11" fill="currentColor"/></svg>Cube</button>
+          <button class="chip" role="radio" aria-checked="false" data-shape="cone"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 L13 13 H1 Z" fill="currentColor"/></svg>Cone</button>
+          <button class="chip" role="radio" aria-checked="false" data-shape="cylinder"><svg viewBox="0 0 14 14" aria-hidden="true"><rect x="3" y="1" width="8" height="12" rx="1.5" fill="currentColor"/></svg>Cylinder</button>
+          <button class="chip" role="radio" aria-checked="false" data-shape="torus"><svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" stroke-width="2.8"/></svg>Torus</button>
+          <button class="chip" role="radio" aria-checked="false" data-shape="pyramid"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 L13 7 L7 13 L1 7 Z" fill="currentColor"/></svg>Pyramid</button>
+        </div>
+      </div>
+      <div class="ctl">
+        <button class="btn primary" id="lab-drop">Drop it in</button>
+        <button class="btn" id="lab-lower">Lower it slowly</button>
+      </div>
+      <div class="ctl">
+        <label class="label" for="lab-h">Flatland height</label>
+        <input type="range" id="lab-h" min="0.05" max="3" step="0.01" value="0.6">
+        <output id="lab-h-out" for="lab-h">0.60</output>
+        <button class="btn" id="lab-scan" aria-pressed="false">Scan</button>
+      </div>
+      <div class="ctl">
+        <button class="btn" id="lab-shake">Shake</button>
+        <button class="btn quiet" id="lab-clear">Clear</button>
+      </div>
+    </div>
+  </figure>
+
+  <section id="visitor">
+    <div class="prose">
+      <p class="eyebrow dims"><b>2D</b> world <span class="op">+</span> <b>3D</b> visitors</p>
+      <h2>A Sphere visits Flatland</h2>
+      <p>In Edwin Abbott's 1884 novella <cite>Flatland</cite>, the narrator is A Square, who lives in a world with length and breadth but no height. A solid object only exists for him where it crosses his plane. The panel beside the 3D view shows exactly that: the cross-section of every shape, seen from above. The strip under it is closer to what A Square really sees, a single line of color.</p>
+      <blockquote>
+        <p>“You call me a Circle; but in reality I am not a Circle, but an infinite number of Circles, of size varying from a Point to a Circle of thirteen inches in diameter, one placed on the top of the other.”</p>
+        <footer>The Sphere, explaining itself to A Square · <cite>Flatland</cite>, 1884</footer>
+      </blockquote>
+      <p>Pick the ball and press <em class="ui">Lower it slowly</em>. A Square sees a point, then a circle that grows, shrinks back to a point and disappears. Do the same with a cube or a pyramid and the slices change shape as it turns: triangles, squares, rectangles, even hexagons. Nothing in A Square's experience tells him these all belong to one rigid object. He meets the slices one after another, so to him a solid looks like a flat shape that changes over time.</p>
+      <ul>
+        <li>Drop a torus. Lying flat, it slices into a ring. Standing on its edge, it slices into two separate circles that merge into one oval near the top.</li>
+        <li>Press <em class="ui">Scan</em> to sweep Flatland up and down through everything resting on the floor, like a scanner building up a body one slice at a time.</li>
+        <li>Grab a cube by one corner and hold it so the opposite corner points down through the sheet. Its slice starts as a triangle and widens into a hexagon.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="loaf">
+    <div class="prose">
+      <p class="eyebrow dims"><b>2D</b> world <span class="op">+</span> time <span class="op">=</span> <b>3D</b> block</p>
+      <h2>Flatland's history is a loaf</h2>
+      <p>Now treat time as a direction. Below is a small Flatland where balls slide around and collide. Record every moment, stack the frames with the earliest at the bottom, and you get a 3D solid: a loaf of spacetime. Each ball becomes a tube, called its <i>worldtube</i>. A collision is a kink where two tubes touch. A ball sitting still would be a straight vertical column.</p>
+      <p>Nothing in the loaf moves. What a Flatlander experiences as motion is the "now" slice rising through it. Drag the <em class="ui">Now</em> slider and the panel on the right shows that slice and nothing else. The past is drawn solid and the future as glass, but in this picture both are equally there. Physicists call this view the <i>block universe</i>.</p>
+    </div>
+
+    <!-- PLATE II: Flatland's history stacked into a spacetime block -->
+    <figure class="plate" aria-label="Spacetime loaf: the full history of a 2D world stacked into 3D">
+      <div class="plate-grid">
+        <div class="view3d" id="loaf-view">
+          <p class="hint">Drag to orbit · time runs upward · the pink sheet is now</p>
+        </div>
+        <div class="side">
+          <div class="panel-head">
+            <span class="label">Flatland at this moment</span>
+            <span class="note">Click to add a ball here, now</span>
+          </div>
+          <canvas class="flat-canvas" id="loaf-flat" tabindex="0" role="img" aria-label="Top-down view of the slice of Flatland at the current moment. Click to add a ball."></canvas>
+          <ul class="legend" aria-label="Legend">
+            <li><span class="sw solid"></span>Past (solid)</li>
+            <li><span class="sw glass"></span>Future (glass)</li>
+            <li><span class="sw slice"></span>Now</li>
+          </ul>
+          <p class="status" id="loaf-status" aria-live="polite">Each tube is one ball's whole history. Click inside Flatland to drop a new ball in at the current moment.</p>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="ctl grow">
+          <button class="btn primary" id="loaf-play">Pause</button>
+          <label class="label" for="loaf-now">Now</label>
+          <input type="range" id="loaf-now" min="0" max="12" step="0.01" value="2.5">
+          <output id="loaf-now-out" for="loaf-now">2.50 s</output>
+        </div>
+        <div class="ctl">
+          <label class="label" for="loaf-tilt">Tilt the slice</label>
+          <input type="range" id="loaf-tilt" min="-20" max="20" step="0.5" value="0">
+          <output id="loaf-tilt-out" for="loaf-tilt">0°</output>
+        </div>
+        <div class="ctl">
+          <button class="btn" id="loaf-south" aria-pressed="false">South pull</button>
+          <button class="btn" id="loaf-new">New history</button>
+        </div>
+      </div>
+    </figure>
+
+    <div class="prose">
+      <p>Clicking inside Flatland adds a ball at the current moment and recalculates everything above the slice. Inside the block picture nobody can do that. The future is already part of the shape, just like the past. (<em class="ui">South pull</em> is a nod to the book, where everything in Flatland feels a slight attraction toward the South.)</p>
+      <p>Now tilt the slice. Special relativity says that observers moving relative to each other disagree about which distant events happen at the same moment. In this picture, each observer cuts the same loaf at a different angle, so a tilted "now" catches each ball at a different time. The panel labels each ball with the moment it was caught. Neither cut is the true one, and that is one of the main reasons physicists take the whole block seriously. A real spacetime diagram tilts by the rules of Minkowski geometry rather than ordinary angles, but the idea is the same.</p>
+    </div>
+  </section>
+
+  <section id="hyper">
+    <div class="prose">
+      <p class="eyebrow dims"><b>3D</b> world <span class="op">+</span> <b>4D</b> visitors</p>
+      <h2>A hypersphere visits us</h2>
+      <p>Go up one dimension. We are the Flatlanders now, and our whole space is the sheet. Call the extra direction <i>w</i>. A 4D ball, or hypersphere, drifting through our space along w would look the way the sphere looked to A Square: a point appears out of nothing, swells into a ball, shrinks and vanishes.</p>
+      <p>Four-dimensional polytopes do stranger things. A tesseract (a 4D cube) passing straight through shows up as a cube that sits still for a while and then disappears. Turn it in 4D first so it arrives corner first, and you see a tiny tetrahedron that grows, has its corners cut off, becomes an octahedron, and then reverses. All of those are slices of one rigid object.</p>
+    </div>
+
+    <!-- PLATE III: 4D objects sliced by our 3D space -->
+    <figure class="plate" aria-label="Four-dimensional objects sliced by our three-dimensional space">
+      <div class="plate-grid">
+        <div class="view3d" id="hyper-view">
+          <p class="hint">Drag to orbit the slice · what you see is the part of the 4D object inside our space</p>
+        </div>
+        <div class="side">
+          <p class="readout" aria-live="polite">
+            <span class="label">The slice in our space</span>
+            <strong id="hyper-name">octahedron</strong>
+            <span class="mono" id="hyper-counts">6 vertices · 12 edges · 8 faces</span>
+          </p>
+          <div>
+            <span class="label">Where our space cuts it along w</span>
+            <canvas class="gauge" id="hyper-gauge" role="img" aria-label="The object's extent along the fourth direction w, with the position of our space marked"></canvas>
+          </div>
+          <fieldset id="hyper-rot">
+            <legend class="label">Turn it in 4D</legend>
+            <div class="slider-row"><label for="rot-xw">XW</label><input type="range" id="rot-xw" min="0" max="360" step="0.5" value="45"><output id="rot-xw-out" for="rot-xw">45°</output></div>
+            <div class="slider-row"><label for="rot-yw">YW</label><input type="range" id="rot-yw" min="0" max="360" step="0.5" value="35.3"><output id="rot-yw-out" for="rot-yw">35°</output></div>
+            <div class="slider-row"><label for="rot-zw">ZW</label><input type="range" id="rot-zw" min="0" max="360" step="0.5" value="30"><output id="rot-zw-out" for="rot-zw">30°</output></div>
+            <div class="chips" style="margin-top:10px">
+              <button class="chip" data-pose="straight">Straight</button>
+              <button class="chip" data-pose="face">Face first</button>
+              <button class="chip" data-pose="edge">Edge first</button>
+              <button class="chip" data-pose="corner">Corner first</button>
+              <button class="chip" id="hyper-tumble" aria-pressed="false" role="switch" aria-checked="false">Tumble</button>
+            </div>
+            <p class="small" id="hyper-rot-note" style="margin-top:8px" hidden></p>
+          </fieldset>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="ctl">
+          <span class="label" id="hyper-shape-label">4D object</span>
+          <div class="chips" role="radiogroup" aria-labelledby="hyper-shape-label" id="hyper-shapes">
+            <button class="chip" role="radio" aria-checked="false" data-shape="glome">Hypersphere</button>
+            <button class="chip" role="radio" aria-checked="true" data-shape="tesseract">Tesseract</button>
+            <button class="chip" role="radio" aria-checked="false" data-shape="cell16">16-cell</button>
+            <button class="chip" role="radio" aria-checked="false" data-shape="cell5">5-cell</button>
+            <button class="chip" role="radio" aria-checked="false" data-shape="cell24">24-cell</button>
+            <button class="chip" role="radio" aria-checked="false" data-shape="thrown">Thrown ball's worldtube</button>
+          </div>
+        </div>
+        <div class="ctl grow">
+          <button class="btn primary" id="hyper-play">Pause</button>
+          <label class="label" for="hyper-w">w</label>
+          <input type="range" id="hyper-w" min="-2.3" max="2.3" step="0.005" value="-1.2">
+          <output id="hyper-w-out" for="hyper-w">−1.20</output>
+          <button class="btn" id="hyper-shadow" aria-pressed="false">Show 4D shadow</button>
+        </div>
+      </div>
+    </figure>
+
+    <div class="prose">
+      <p>Now pick <em class="ui">Thrown ball's worldtube</em>. This 4D shape is a curved tube: the history of one ordinary ball, with w standing in for time. Every slice of it is a single ball, and sliding w makes that ball fly and bounce. The tube itself never moves or changes. All of the motion comes from which slice you are looking at.</p>
+      <p><em class="ui">Show 4D shadow</em> flattens the whole object into our space, the way a cube casts a flat shadow on a wall. The shadow is a picture of the entire 4D object. The solid slice is the only part of it that actually exists here.</p>
+    </div>
+  </section>
+
+  <section id="you">
+    <div class="prose">
+      <p class="eyebrow dims"><b>3D</b> world <span class="op">+</span> time <span class="op">=</span> <b>4D</b> block</p>
+      <h2>You are a slice too</h2>
+      <p>Put the pieces together. Flatland plus time made a 3D loaf, which we could draw. Our space plus time makes a 4D block that nobody can draw, but it follows the same rules. Your body right now is a 3D cross-section of a long 4D worldtube that starts before you were born and runs to the end of your life. "Now" is where the slice happens to be.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th scope="col"></th><th scope="col">Flatland</th><th scope="col">Our world</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Space</th><td>a 2D plane</td><td>3D space</td></tr>
+            <tr><th scope="row">A visitor from one dimension up</th><td>a sphere, seen as circles that grow and shrink</td><td>a hypersphere, seen as balls that grow and shrink</td></tr>
+            <tr><th scope="row">All of history</th><td>a 3D loaf (plate II)</td><td>a 4D block</td></tr>
+            <tr><th scope="row">"Now"</th><td class="hi">a 2D slice of the loaf</td><td class="hi">a 3D slice of the block</td></tr>
+            <tr><th scope="row">One ball's whole life</th><td>a tube through the loaf</td><td>a 4D worldtube</td></tr>
+            <tr><th scope="row">Motion</th><td>a slanted tube seen one slice at a time</td><td>the same, one dimension higher</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Where the picture breaks</h3>
+      <ul class="caveats">
+        <li><b>Time is not quite a fourth direction of space.</b> In relativity, the separation between two events subtracts the time part instead of adding it (the Minkowski metric). That minus sign is why nothing can outrun light, and why tilting a slice follows hyperbolic rules instead of the ordinary rotation drawn in plate II.</li>
+        <li><b>The block does not say why the slice moves forward.</b> The basic laws of motion work the same forwards and backwards. The arrow of time is usually traced to entropy, which was very low at the Big Bang and has been rising ever since. Memory and cause-and-effect run in the direction entropy increases.</li>
+        <li><b>It is one interpretation.</b> The block universe, also called eternalism, is popular with physicists because of the relativity of simultaneity. Presentism (only now is real) and the growing block (the past and present are real, the future is not yet) both still have serious defenders, and quantum mechanics adds open questions of its own.</li>
+      </ul>
+
+      <p class="closing">When A Square tried to tell the other Flatlanders about the third dimension, he kept repeating "Upward, not Northward," and was jailed for heresy. The extra direction on this page is easier to find. You travel along it every second.</p>
+    </div>
+  </section>
+
+  <footer class="credits">
+    Built with three.js for rendering and cannon-es for the 3D physics in plate I. The Flatland in plate II runs a small elastic-collision simulation written for this page. Quotations are from Edwin A. Abbott, <cite>Flatland: A Romance of Many Dimensions</cite> (1884).
+  </footer>
+</main>
+
+<script>
+  // If the 3D libraries fail to load from the CDN, say so instead of leaving blank panels.
+  setTimeout(function () {
+    if (window.__slicesReady) return;
+    document.querySelectorAll('.view3d').forEach(function (el) {
+      if (el.querySelector('canvas')) return;
+      var p = document.createElement('p');
+      p.className = 'nogl';
+      p.textContent = 'The 3D view could not load. It needs three.js from cdn.jsdelivr.net; check your connection and reload.';
+      el.appendChild(p);
+    });
+  }, 9000);
+</script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/",
+    "cannon-es": "https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/dist/cannon-es.js"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { LineSegments2 } from 'three/addons/lines/LineSegments2.js';
+import { LineSegmentsGeometry } from 'three/addons/lines/LineSegmentsGeometry.js';
+import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
+import { ConvexGeometry } from 'three/addons/geometries/ConvexGeometry.js';
+import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
+import * as CANNON from 'cannon-es';
+
+window.__slicesReady = true;
+
+// ---------------------------------------------------------------- utilities
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const rand = (a, b) => a + Math.random() * (b - a);
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const dpr = () => Math.min(window.devicePixelRatio || 1, 2);
+const fmtSigned = (v, d = 2) => (v < 0 ? '−' : '') + Math.abs(v).toFixed(d);
+
+function hexToRgb(hex) {
+  let h = hex.replace('#', '').trim();
+  if (h.length === 3) h = h.split('').map(c => c + c).join('');
+  const n = parseInt(h, 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+
+// Theme tokens are read from CSS so canvases and 3D materials follow light/dark.
+let theme = readTheme();
+const themeHooks = [];
+function readTheme() {
+  const cs = getComputedStyle(document.documentElement);
+  const g = n => cs.getPropertyValue(n).trim();
+  return {
+    paper: g('--paper'), surface: g('--surface'), floor: g('--floor'), flat: g('--flat'), grid: g('--grid'),
+    fog: g('--fog'), ink: g('--ink'), muted: g('--muted'), rule: g('--rule'), now: g('--now'),
+    objs: [1, 2, 3, 4, 5, 6].map(i => g('--o' + i)),
+  };
+}
+function refreshTheme() { theme = readTheme(); for (const f of themeHooks) f(); }
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', refreshTheme);
+new MutationObserver(refreshTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+function fitCanvas(c) {
+  const w = Math.round(c.clientWidth * dpr()), h = Math.round(c.clientHeight * dpr());
+  if (w && h && (c.width !== w || c.height !== h)) { c.width = w; c.height = h; }
+  return [c.width, c.height];
+}
+
+function setRadio(group, btn) {
+  for (const b of $$('[role=radio]', group)) b.setAttribute('aria-checked', String(b === btn));
+}
+
+// ---------------------------------------------------------------- 3D stages
+const stages = [];
+const io = new IntersectionObserver(entries => {
+  for (const e of entries) if (e.target._stage) e.target._stage.visible = e.isIntersecting;
+}, { rootMargin: '160px' });
+
+function makeStage(el, o) {
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  } catch (err) {
+    const p = document.createElement('p');
+    p.className = 'nogl';
+    p.textContent = 'This view needs WebGL, which is turned off or unavailable in this browser.';
+    el.appendChild(p);
+    return null;
+  }
+  renderer.setPixelRatio(dpr());
+  renderer.setClearColor(0x000000, 0);
+  renderer.localClippingEnabled = true;
+  el.prepend(renderer.domElement);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(o.fov || 38, 1, 0.1, 200);
+  camera.position.set(...o.cam);
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.target.set(...o.target);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.09;
+  controls.enablePan = false;
+  controls.minDistance = o.min;
+  controls.maxDistance = o.max;
+  if (o.maxPolar) controls.maxPolarAngle = o.maxPolar;
+  controls.update();
+  // Vertical swipes scroll the page on phones; horizontal swipes orbit.
+  renderer.domElement.style.touchAction = 'pan-y';
+  // A plain mouse wheel scrolls the page; pinch or Ctrl/Cmd + wheel zooms.
+  el.addEventListener('wheel', e => { if (!e.ctrlKey && !e.metaKey) e.stopPropagation(); }, { capture: true });
+
+  const stage = {
+    el, renderer, scene, camera, controls, visible: false, w: 1, h: 1, lineMats: [], labels: [], tick: null,
+    resize() {
+      const w = Math.max(1, el.clientWidth), h = Math.max(1, el.clientHeight);
+      stage.w = w; stage.h = h;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      for (const m of stage.lineMats) m.resolution.set(w, h);
+    },
+    render() {
+      controls.update();
+      renderer.render(scene, camera);
+      updateLabels(stage);
+    },
+  };
+  new ResizeObserver(() => stage.resize()).observe(el);
+  el._stage = stage;
+  io.observe(el);
+  stages.push(stage);
+  stage.resize();
+  return stage;
+}
+
+const _v = new THREE.Vector3();
+function addLabel(stage, text, cls = '') {
+  const d = document.createElement('div');
+  d.className = 'tag ' + cls;
+  d.textContent = text;
+  stage.el.appendChild(d);
+  const L = { el: d, pos: new THREE.Vector3(), show: true };
+  stage.labels.push(L);
+  return L;
+}
+function updateLabels(stage) {
+  for (const L of stage.labels) {
+    _v.copy(L.pos).project(stage.camera);
+    const off = !L.show || _v.z > 1;
+    L.el.hidden = off;
+    if (off) continue;
+    const x = (_v.x * 0.5 + 0.5) * stage.w, y = (-_v.y * 0.5 + 0.5) * stage.h;
+    L.el.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) translate(8px, -50%)`;
+  }
+}
+
+// Thick screen-space lines (WebGL's own lines are always 1px).
+function fatLines(stage, color, width, opts = {}) {
+  const mat = new LineMaterial({
+    color, linewidth: width, transparent: true, opacity: opts.opacity ?? 1,
+    depthTest: opts.depthTest ?? true, depthWrite: false,
+  });
+  mat.resolution.set(stage.w, stage.h);
+  stage.lineMats.push(mat);
+  const line = new LineSegments2(new LineSegmentsGeometry(), mat);
+  line.renderOrder = opts.order ?? 5;
+  line.frustumCulled = false;
+  line.visible = false;
+  stage.scene.add(line);
+  line.set = arr => {
+    const old = line.geometry;
+    const g = new LineSegmentsGeometry();
+    if (arr.length) g.setPositions(arr);
+    line.geometry = g;
+    old.dispose();
+    line.visible = arr.length > 0;
+  };
+  return line;
+}
+
+function addLights(scene, shadows) {
+  const hemi = new THREE.HemisphereLight(0xffffff, 0x7d879a, 1.7);
+  const sun = new THREE.DirectionalLight(0xffffff, 2.1);
+  sun.position.set(5, 11, 7);
+  if (shadows) {
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(1024, 1024);
+    Object.assign(sun.shadow.camera, { left: -7, right: 7, top: 7, bottom: -7, near: 1, far: 30 });
+    sun.shadow.bias = -0.0004;
+    sun.shadow.normalBias = 0.02;
+  }
+  const fill = new THREE.DirectionalLight(0xffffff, 0.5);
+  fill.position.set(-6, 4, -5);
+  scene.add(hemi, sun, fill);
+}
+
+// ---------------------------------------------------------------- mesh slicing
+// Welds a geometry so every edge is shared by exactly two triangles,
+// which lets the cut segments be chained into closed loops.
+function makeSlicer(geom) {
+  const g = geom.clone();
+  for (const k of Object.keys(g.attributes)) if (k !== 'position') g.deleteAttribute(k);
+  const m = mergeVertices(g, 1e-4);
+  const pos = m.attributes.position.array, idx = m.index.array, n = pos.length / 3;
+  return { pos, idx, n, wx: new Float32Array(n), wy: new Float32Array(n), wz: new Float32Array(n) };
+}
+
+// Cuts a mesh with the horizontal plane y = h. Returns loops of [x0, z0, x1, z1, ...].
+function sliceMesh(s, matrix, h) {
+  const e = matrix.elements, { pos, idx, n, wx, wy, wz } = s;
+  let lo = Infinity, hi = -Infinity;
+  for (let i = 0; i < n; i++) {
+    const x = pos[3 * i], y = pos[3 * i + 1], z = pos[3 * i + 2];
+    wx[i] = e[0] * x + e[4] * y + e[8] * z + e[12];
+    const yy = wy[i] = e[1] * x + e[5] * y + e[9] * z + e[13];
+    wz[i] = e[2] * x + e[6] * y + e[10] * z + e[14];
+    if (yy < lo) lo = yy;
+    if (yy > hi) hi = yy;
+  }
+  if (h <= lo || h >= hi) return [];
+  const pts = new Map(), nb = new Map();
+  const key = (a, b) => (a < b ? a * n + b : b * n + a);
+  const cut = (a, b) => {
+    const k = key(a, b);
+    if (!pts.has(k)) {
+      const t = (h - wy[a]) / (wy[b] - wy[a]);
+      pts.set(k, [wx[a] + t * (wx[b] - wx[a]), wz[a] + t * (wz[b] - wz[a])]);
+    }
+    return k;
+  };
+  const link = (k1, k2) => {
+    if (!nb.has(k1)) nb.set(k1, []);
+    if (!nb.has(k2)) nb.set(k2, []);
+    nb.get(k1).push(k2);
+    nb.get(k2).push(k1);
+  };
+  for (let t = 0; t < idx.length; t += 3) {
+    const a = idx[t], b = idx[t + 1], c = idx[t + 2];
+    const sa = wy[a] >= h, sb = wy[b] >= h, sc = wy[c] >= h;
+    if (sa === sb && sb === sc) continue;
+    const ks = [];
+    if (sa !== sb) ks.push(cut(a, b));
+    if (sb !== sc) ks.push(cut(b, c));
+    if (sc !== sa) ks.push(cut(c, a));
+    link(ks[0], ks[1]);
+  }
+  const loops = [], seen = new Set();
+  for (const start of nb.keys()) {
+    if (seen.has(start)) continue;
+    const loop = [];
+    let cur = start;
+    while (cur !== undefined && !seen.has(cur)) {
+      seen.add(cur);
+      const p = pts.get(cur);
+      loop.push(p[0], p[1]);
+      cur = nb.get(cur).find(k => !seen.has(k));
+    }
+    if (loop.length >= 6) loops.push(loop);
+  }
+  return loops;
+}
+
+// ================================================================ PLATE I · Flatland lab
+function initLab() {
+  const el = $('#lab-view');
+  const stage = makeStage(el, { cam: [7.4, 6.6, 9.6], target: [0, 1.0, 0], min: 6, max: 22, maxPolar: Math.PI * 0.46 });
+  if (!stage) return;
+  const { scene, camera } = stage;
+  const flat = $('#lab-flat'), retina = $('#lab-retina');
+  const hSlider = $('#lab-h'), hOut = $('#lab-h-out'), scanBtn = $('#lab-scan');
+  const HALF = 5, MAX_OBJ = 14, REST_H = 0.6;
+  const S = {
+    h: reduceMotion ? REST_H : 2.3, hTarget: null, lowerIn: null,
+    scan: false, scanT: 0, shape: 'ball', sq: { x: -3.6, z: 3.1 }, intro: !reduceMotion,
+  };
+  const objects = [];
+
+  stage.renderer.shadowMap.enabled = true;
+  stage.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  addLights(scene, true);
+
+  // physics world: a 10 x 10 box with a floor, walls and a ceiling
+  const world = new CANNON.World({ gravity: new CANNON.Vec3(0, -9.82, 0) });
+  world.broadphase = new CANNON.SAPBroadphase(world);
+  world.allowSleep = true;
+  world.defaultContactMaterial.friction = 0.35;
+  world.defaultContactMaterial.restitution = 0.32;
+  const wall = (x, y, z, ex, ey, ez) => {
+    const b = new CANNON.Body({ type: CANNON.Body.STATIC, shape: new CANNON.Plane() });
+    b.position.set(x, y, z);
+    b.quaternion.setFromEuler(ex, ey, ez);
+    world.addBody(b);
+  };
+  wall(0, 0, 0, -Math.PI / 2, 0, 0);
+  wall(-HALF, 0, 0, 0, Math.PI / 2, 0);
+  wall(HALF, 0, 0, 0, -Math.PI / 2, 0);
+  wall(0, 0, -HALF, 0, 0, 0);
+  wall(0, 0, HALF, 0, Math.PI, 0);
+  wall(0, 12, 0, Math.PI / 2, 0, 0);
+
+  // floor
+  const floorMat = new THREE.MeshStandardMaterial({ color: theme.floor, roughness: 0.95 });
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), floorMat);
+  floor.rotation.x = -Math.PI / 2;
+  floor.receiveShadow = true;
+  scene.add(floor);
+  const floorGrid = new THREE.GridHelper(10, 10, theme.rule, theme.rule);
+  floorGrid.position.y = 0.003;
+  floorGrid.material.transparent = true;
+  floorGrid.material.opacity = 0.55;
+  scene.add(floorGrid);
+
+  // Flatland: a translucent sheet whose texture is the same drawing as the side panel
+  const texCanvas = document.createElement('canvas');
+  texCanvas.width = texCanvas.height = 512;
+  const tex = new THREE.CanvasTexture(texCanvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 4;
+  const sheet = new THREE.Mesh(
+    new THREE.PlaneGeometry(10, 10),
+    new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide, depthWrite: false }),
+  );
+  sheet.rotation.x = -Math.PI / 2;
+  sheet.renderOrder = 2;
+  scene.add(sheet);
+  const sheetFrame = fatLines(stage, theme.now, 2, { order: 3 });
+  const contour = fatLines(stage, theme.now, 3.2, { depthTest: false, order: 10 });
+  const flatLabel = addLabel(stage, 'Flatland', 'now');
+
+  // shapes: visual geometry, physics body parts, and bounding radius
+  const hull = geom => {
+    const g = geom.clone();
+    for (const k of Object.keys(g.attributes)) if (k !== 'position') g.deleteAttribute(k);
+    const m = mergeVertices(g, 1e-4);
+    const p = m.attributes.position.array, ix = m.index.array;
+    const vertices = [], faces = [];
+    for (let i = 0; i < p.length; i += 3) vertices.push(new CANNON.Vec3(p[i], p[i + 1], p[i + 2]));
+    for (let i = 0; i < ix.length; i += 3) faces.push([ix[i], ix[i + 1], ix[i + 2]]);
+    return new CANNON.ConvexPolyhedron({ vertices, faces });
+  };
+  // Cones and pyramids are shifted so their centre of mass sits at the body origin.
+  const SH = {
+    ball: { make: () => new THREE.SphereGeometry(0.72, 48, 24), body: () => [[new CANNON.Sphere(0.72)]], ext: 0.72, mass: 1.2 },
+    cube: { make: () => new THREE.BoxGeometry(1.2, 1.2, 1.2), body: () => [[new CANNON.Box(new CANNON.Vec3(0.6, 0.6, 0.6))]], ext: 1.04, mass: 1.2 },
+    cone: {
+      make: () => new THREE.ConeGeometry(0.72, 1.5, 48).translate(0, 0.375, 0),
+      body: () => [[hull(new THREE.ConeGeometry(0.72, 1.5, 16).translate(0, 0.375, 0))]], ext: 1.13, mass: 0.8,
+    },
+    cylinder: {
+      make: () => new THREE.CylinderGeometry(0.56, 0.56, 1.3, 48),
+      body: () => [[hull(new THREE.CylinderGeometry(0.56, 0.56, 1.3, 16))]], ext: 0.86, mass: 1,
+    },
+    torus: {
+      make: () => new THREE.TorusGeometry(0.62, 0.27, 24, 64),
+      body: () => {
+        const parts = [];
+        for (let i = 0; i < 12; i++) {
+          const a = (i / 12) * Math.PI * 2;
+          parts.push([new CANNON.Sphere(0.27), new CANNON.Vec3(Math.cos(a) * 0.62, Math.sin(a) * 0.62, 0)]);
+        }
+        return parts;
+      },
+      ext: 0.89, mass: 0.8,
+    },
+    pyramid: {
+      make: () => new THREE.ConeGeometry(0.9, 1.25, 4, 1).translate(0, 0.3125, 0),
+      body: () => [[hull(new THREE.ConeGeometry(0.9, 1.25, 4, 1).translate(0, 0.3125, 0))]], ext: 0.95, mass: 1,
+    },
+  };
+  const geomCache = {}, slicerCache = {};
+  const getGeom = t => (geomCache[t] ||= SH[t].make());
+  const getSlicer = t => (slicerCache[t] ||= makeSlicer(getGeom(t)));
+
+  let colorIx = 0;
+  function addObject(type, x, y, z, { kinematic = false, upright = false } = {}) {
+    const def = SH[type];
+    const color = theme.objs[colorIx++ % theme.objs.length];
+    const mesh = new THREE.Mesh(getGeom(type), new THREE.MeshStandardMaterial({ color, roughness: 0.5, metalness: 0.02 }));
+    mesh.castShadow = mesh.receiveShadow = true;
+    scene.add(mesh);
+    const body = new CANNON.Body({
+      mass: kinematic ? 0 : def.mass,
+      type: kinematic ? CANNON.Body.KINEMATIC : CANNON.Body.DYNAMIC,
+      linearDamping: 0.03, angularDamping: 0.06,
+      allowSleep: true, sleepSpeedLimit: 0.12, sleepTimeLimit: 0.8,
+    });
+    for (const [shape, off] of def.body()) body.addShape(shape, off);
+    body.position.set(x, y, z);
+    if (!upright) body.quaternion.setFromEuler(rand(0, 6.28), rand(0, 6.28), rand(0, 6.28));
+    world.addBody(body);
+    const o = { type, mesh, body, color, rgb: hexToRgb(color), mass: def.mass, ext: def.ext, slicer: getSlicer(type), loops: [], kin: kinematic, intro: false };
+    mesh.userData.obj = o;
+    objects.push(o);
+    while (objects.length > MAX_OBJ) removeObject(objects[0]);
+    return o;
+  }
+  function removeObject(o) {
+    if (drag && drag.o === o) endDrag();
+    world.removeBody(o.body);
+    scene.remove(o.mesh);
+    o.mesh.material.dispose();
+    objects.splice(objects.indexOf(o), 1);
+  }
+  function release(o) {
+    o.kin = false;
+    o.body.type = CANNON.Body.DYNAMIC;
+    o.body.mass = o.mass;
+    o.body.updateMassProperties();
+    o.body.wakeUp();
+    if (o.intro) { o.intro = false; S.lowerIn = 0.9; }
+  }
+
+  // "Lower it slowly": a kinematic visit, like the Sphere's in the book
+  function visit(type) {
+    const ext = SH[type].ext;
+    const need = 2 * ext + 0.35;
+    if (S.h < need) { stopScan(); S.hTarget = need; }
+    const top = Math.max(S.h, need);
+    const o = addObject(type, 0, top + ext + 0.9, 0, { kinematic: true, upright: type !== 'cube' });
+    o.body.velocity.set(0, -0.42, 0);
+    if (type !== 'ball') o.body.angularVelocity.set(0.16, 0.28, 0.1);
+    return o;
+  }
+  function drop(type) {
+    const o = addObject(type, rand(-2.8, 2.8), 5.2, rand(-2.8, 2.8));
+    o.body.angularVelocity.set(rand(-3, 3), rand(-3, 3), rand(-3, 3));
+  }
+  function shake() {
+    for (const o of objects) {
+      if (o.kin) release(o);
+      o.body.wakeUp();
+      o.body.applyImpulse(new CANNON.Vec3(rand(-1.5, 1.5), rand(5, 8), rand(-1.5, 1.5)).scale(o.mass));
+      o.body.angularVelocity.set(rand(-6, 6), rand(-6, 6), rand(-6, 6));
+    }
+  }
+
+  // opening scene: shapes resting on the floor, then a ball descends through a raised Flatland
+  const layout = [['cube', -2.6, -1.7], ['cone', 2.5, -2.3], ['torus', -2.3, 2.1], ['cylinder', 2.6, 2.0], ['pyramid', 0.3, -3.3]];
+  for (const [t, x, z] of layout) addObject(t, x, 1.4, z);
+  for (let i = 0; i < 300; i++) world.step(1 / 60);
+  if (S.intro) {
+    const v = visit('ball');
+    v.intro = true;
+  } else {
+    addObject('ball', 0.2, 0.8, 0.6, { upright: true });
+  }
+
+  // ---- drawing Flatland (the panel and the sheet texture share this)
+  function drawFlat(ctx, W, forTex) {
+    const k = W / 10, X = v => (v + HALF) * k;
+    const d = forTex ? W / 512 : dpr();
+    ctx.clearRect(0, 0, W, W);
+    if (forTex) {
+      ctx.globalAlpha = 0.1; ctx.fillStyle = theme.now; ctx.fillRect(0, 0, W, W);
+    } else {
+      ctx.fillStyle = theme.flat; ctx.fillRect(0, 0, W, W);
+    }
+    ctx.globalAlpha = forTex ? 0.22 : 1;
+    ctx.strokeStyle = forTex ? theme.now : theme.grid;
+    ctx.lineWidth = d;
+    ctx.beginPath();
+    for (let i = 1; i < 10; i++) { ctx.moveTo(i * k, 0); ctx.lineTo(i * k, W); ctx.moveTo(0, i * k); ctx.lineTo(W, i * k); }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    ctx.lineJoin = 'round';
+    for (const o of objects) {
+      if (!o.loops.length) continue;
+      ctx.beginPath();
+      for (const L of o.loops) {
+        ctx.moveTo(X(L[0]), X(L[1]));
+        for (let i = 2; i < L.length; i += 2) ctx.lineTo(X(L[i]), X(L[i + 1]));
+        ctx.closePath();
+      }
+      ctx.fillStyle = o.color;
+      ctx.fill('evenodd');
+      ctx.strokeStyle = theme.now;
+      ctx.lineWidth = 2 * d;
+      ctx.stroke();
+    }
+    // A Square, facing the middle of Flatland
+    const ang = Math.atan2(-S.sq.z, -S.sq.x), size = 0.5 * k;
+    ctx.save();
+    ctx.translate(X(S.sq.x), X(S.sq.z));
+    ctx.rotate(ang);
+    if (!forTex) {
+      const len = 1.6 * k;
+      ctx.strokeStyle = theme.muted;
+      ctx.globalAlpha = 0.6;
+      ctx.lineWidth = d;
+      ctx.setLineDash([3 * d, 4 * d]);
+      ctx.beginPath();
+      ctx.moveTo(0, 0); ctx.lineTo(Math.cos(-FOV / 2) * len, Math.sin(-FOV / 2) * len);
+      ctx.moveTo(0, 0); ctx.lineTo(Math.cos(FOV / 2) * len, Math.sin(FOV / 2) * len);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.globalAlpha = 1;
+    }
+    ctx.fillStyle = theme.ink;
+    ctx.fillRect(-size / 2, -size / 2, size, size);
+    ctx.fillStyle = theme.now;
+    ctx.beginPath();
+    ctx.arc(size / 2, 0, size * 0.17, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // ---- A Square's eye: 1D ray-cast through fog
+  const FOV = 1.9, RAYS = 160;
+  function drawRetina() {
+    const [W, H] = fitCanvas(retina);
+    if (!W) return;
+    const ctx = retina.getContext('2d');
+    const fog = hexToRgb(theme.fog);
+    const ex = [], cols = [];
+    for (const o of objects) for (const L of o.loops) {
+      for (let i = 0; i < L.length; i += 2) {
+        const j = (i + 2) % L.length;
+        ex.push(L[i], L[i + 1], L[j], L[j + 1]);
+        cols.push(o.rgb);
+      }
+    }
+    const ox = S.sq.x, oz = S.sq.z, phi = Math.atan2(-oz, -ox);
+    for (let i = 0; i < RAYS; i++) {
+      const a = phi - FOV / 2 + (FOV * (i + 0.5)) / RAYS;
+      const dx = Math.cos(a), dz = Math.sin(a);
+      let best = Infinity, col = null;
+      for (let s = 0, c = 0; s < ex.length; s += 4, c++) {
+        const px = ex[s], pz = ex[s + 1], qx = ex[s + 2] - px, qz = ex[s + 3] - pz;
+        const den = dx * qz - dz * qx;
+        if (Math.abs(den) < 1e-9) continue;
+        const wx = px - ox, wz = pz - oz;
+        const t = (wx * qz - wz * qx) / den, u = (wx * dz - wz * dx) / den;
+        if (t > 1e-4 && u >= 0 && u <= 1 && t < best) { best = t; col = cols[c]; }
+      }
+      let r = fog[0], g = fog[1], b = fog[2];
+      if (col) {
+        const f = Math.exp(-best / 3.6);
+        r = lerp(fog[0], col[0], f); g = lerp(fog[1], col[1], f); b = lerp(fog[2], col[2], f);
+      }
+      ctx.fillStyle = `rgb(${r | 0},${g | 0},${b | 0})`;
+      const x0 = Math.floor((i * W) / RAYS), x1 = Math.floor(((i + 1) * W) / RAYS);
+      ctx.fillRect(x0, 0, x1 - x0 + 1, H);
+    }
+  }
+
+  // ---- Flatland height
+  let lastFrameH = null;
+  function syncH() {
+    hSlider.value = S.h;
+    hOut.textContent = S.h.toFixed(2);
+    sheet.position.y = S.h;
+    if (lastFrameH !== S.h) {
+      const y = S.h;
+      sheetFrame.set([-5, y, -5, 5, y, -5, 5, y, -5, 5, y, 5, 5, y, 5, -5, y, 5, -5, y, 5, -5, y, -5]);
+      lastFrameH = y;
+    }
+    flatLabel.pos.set(-5, S.h, -5);
+  }
+  function stopScan() {
+    S.scan = false;
+    scanBtn.setAttribute('aria-pressed', 'false');
+  }
+  function cancelIntro() { S.hTarget = null; S.lowerIn = null; }
+  hSlider.addEventListener('input', () => { cancelIntro(); stopScan(); S.h = +hSlider.value; syncH(); });
+  scanBtn.addEventListener('click', () => {
+    cancelIntro();
+    S.scan = !S.scan;
+    scanBtn.setAttribute('aria-pressed', String(S.scan));
+    if (S.scan) S.scanT = Math.acos(clamp(1 - (2 * (S.h - 0.05)) / 2.45, -1, 1)) * 9 / (2 * Math.PI);
+  });
+  const shapeGroup = $('#lab-shapes');
+  shapeGroup.addEventListener('click', e => {
+    const b = e.target.closest('[data-shape]');
+    if (!b) return;
+    S.shape = b.dataset.shape;
+    setRadio(shapeGroup, b);
+  });
+  $('#lab-drop').addEventListener('click', () => drop(S.shape));
+  $('#lab-lower').addEventListener('click', () => { cancelIntro(); visit(S.shape); });
+  $('#lab-shake').addEventListener('click', shake);
+  $('#lab-clear').addEventListener('click', () => { while (objects.length) removeObject(objects[0]); });
+
+  // ---- grabbing shapes with a spring constraint
+  const raycaster = new THREE.Raycaster(), ndc = new THREE.Vector2();
+  const dragPlane = new THREE.Plane(), hitP = new THREE.Vector3(), camDir = new THREE.Vector3();
+  const joint = new CANNON.Body({ mass: 0 });
+  joint.addShape(new CANNON.Sphere(0.05));
+  joint.collisionFilterGroup = 0;
+  joint.collisionFilterMask = 0;
+  world.addBody(joint);
+  let drag = null;
+  function aim(e) {
+    const r = el.getBoundingClientRect();
+    ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+    raycaster.setFromCamera(ndc, camera);
+    return raycaster.intersectObjects(objects.map(o => o.mesh), false)[0];
+  }
+  el.addEventListener('pointerdown', e => {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    const hit = aim(e);
+    if (!hit) return;
+    stage.controls.enabled = false; // runs before OrbitControls sees the event
+    const o = hit.object.userData.obj;
+    if (o.kin) { cancelIntro(); release(o); }
+    const b = o.body;
+    b.wakeUp();
+    const p = hit.point;
+    dragPlane.setFromNormalAndCoplanarPoint(camera.getWorldDirection(camDir).negate(), p);
+    joint.position.set(p.x, p.y, p.z);
+    const local = b.quaternion.inverse().vmult(new CANNON.Vec3(p.x - b.position.x, p.y - b.position.y, p.z - b.position.z));
+    const c = new CANNON.PointToPointConstraint(b, local, joint, new CANNON.Vec3(0, 0, 0));
+    world.addConstraint(c);
+    drag = { o, c };
+    try { el.setPointerCapture(e.pointerId); } catch (_) { /* ignore */ }
+    el.classList.add('grabbing');
+  }, { capture: true });
+  el.addEventListener('pointermove', e => {
+    if (drag) {
+      aim(e);
+      if (raycaster.ray.intersectPlane(dragPlane, hitP)) {
+        joint.position.set(clamp(hitP.x, -4.6, 4.6), clamp(hitP.y, 0.15, 8), clamp(hitP.z, -4.6, 4.6));
+        drag.c.update();
+        drag.o.body.wakeUp();
+      }
+    } else if (e.pointerType === 'mouse' && e.buttons === 0) {
+      el.classList.toggle('can-grab', !!aim(e));
+    }
+  });
+  function endDrag() {
+    if (!drag) return;
+    world.removeConstraint(drag.c);
+    drag = null;
+    stage.controls.enabled = true;
+    el.classList.remove('grabbing');
+  }
+  el.addEventListener('pointerup', endDrag);
+  el.addEventListener('pointercancel', endDrag);
+
+  // ---- moving A Square in the panel
+  let movingSq = false;
+  const moveSq = e => {
+    const r = flat.getBoundingClientRect();
+    S.sq.x = clamp(((e.clientX - r.left) / r.width) * 10 - 5, -4.7, 4.7);
+    S.sq.z = clamp(((e.clientY - r.top) / r.height) * 10 - 5, -4.7, 4.7);
+    if (Math.hypot(S.sq.x, S.sq.z) < 0.4) S.sq.x = -0.4;
+  };
+  flat.addEventListener('pointerdown', e => { movingSq = true; flat.setPointerCapture(e.pointerId); moveSq(e); });
+  flat.addEventListener('pointermove', e => { if (movingSq) moveSq(e); });
+  flat.addEventListener('pointerup', () => { movingSq = false; });
+  flat.addEventListener('pointercancel', () => { movingSq = false; });
+
+  themeHooks.push(() => {
+    floorMat.color.set(theme.floor);
+    floorGrid.material.color.set(theme.rule);
+    sheetFrame.material.color.set(theme.now);
+    contour.material.color.set(theme.now);
+  });
+
+  syncH();
+  const tctx = texCanvas.getContext('2d');
+  stage.tick = dt => {
+    if (S.scan) {
+      S.scanT += dt;
+      S.h = 0.05 + 2.45 * (0.5 - 0.5 * Math.cos((S.scanT * 2 * Math.PI) / 9));
+      syncH();
+    } else if (S.hTarget != null) {
+      S.h += (S.hTarget - S.h) * Math.min(1, dt * 2.2);
+      if (Math.abs(S.hTarget - S.h) < 0.002) { S.h = S.hTarget; S.hTarget = null; }
+      syncH();
+    }
+    if (S.lowerIn != null) {
+      S.lowerIn -= dt;
+      if (S.lowerIn <= 0) { S.lowerIn = null; S.hTarget = REST_H; }
+    }
+    for (const o of objects) {
+      if (!o.kin) continue;
+      const y = o.body.position.y;
+      if (y + o.ext < S.h - 0.05 || y < o.ext + 0.03) release(o);
+    }
+    world.step(1 / 60, dt, 4);
+    const segs = [];
+    for (let i = objects.length - 1; i >= 0; i--) {
+      const o = objects[i];
+      if (o.body.position.y < -3) { removeObject(o); continue; }
+      o.mesh.position.copy(o.body.position);
+      o.mesh.quaternion.copy(o.body.quaternion);
+      o.mesh.updateMatrixWorld();
+      o.loops = sliceMesh(o.slicer, o.mesh.matrixWorld, S.h);
+      for (const L of o.loops) {
+        for (let j = 0; j < L.length; j += 2) {
+          const k = (j + 2) % L.length;
+          segs.push(L[j], S.h, L[j + 1], L[k], S.h, L[k + 1]);
+        }
+      }
+    }
+    contour.set(segs);
+    drawFlat(tctx, texCanvas.width, true);
+    tex.needsUpdate = true;
+    const [W] = fitCanvas(flat);
+    if (W) drawFlat(flat.getContext('2d'), W, false);
+    drawRetina();
+    stage.render();
+  };
+}
+
+// ================================================================ PLATE II · the spacetime loaf
+function initLoaf() {
+  const el = $('#loaf-view');
+  const stage = makeStage(el, { cam: [13.2, 9.4, 15.2], target: [0, 4.3, 0], min: 10, max: 38, maxPolar: Math.PI * 0.6 });
+  if (!stage) return;
+  const { scene } = stage;
+  const panel = $('#loaf-flat'), status = $('#loaf-status');
+  const playBtn = $('#loaf-play'), nowSlider = $('#loaf-now'), nowOut = $('#loaf-now-out');
+  const tiltSlider = $('#loaf-tilt'), tiltOut = $('#loaf-tilt-out'), southBtn = $('#loaf-south');
+  const T = 12, REC = 30, K = T * REC, SUB = 8, DT = 1 / (REC * SUB), S = 0.75, HALF = 5, G = 2.4, MAXB = 12;
+  const L = { now: 2.5, playing: !reduceMotion, tilt: 0, south: false, balls: [] };
+  let colorIx = 0;
+
+  addLights(scene, false);
+
+  // block outline, time ticks and the t = 0 floor
+  const boxH = T * S;
+  const boxMat = new THREE.LineBasicMaterial({ color: theme.rule });
+  const box = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(10, boxH, 10)), boxMat);
+  box.position.y = boxH / 2;
+  scene.add(box);
+  const tickPts = [];
+  for (let t = 0; t <= T; t++) tickPts.push(-5, t * S, 5, -5.35, t * S, 5.35);
+  const ticks = new THREE.LineSegments(new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(tickPts, 3)), boxMat);
+  scene.add(ticks);
+  const baseGrid = new THREE.GridHelper(10, 10, theme.rule, theme.rule);
+  baseGrid.material.transparent = true;
+  baseGrid.material.opacity = 0.6;
+  scene.add(baseGrid);
+  for (const t of [0, 4, 8, 12]) addLabel(stage, `${t} s`).pos.set(-5.45, t * S, 5.45);
+  addLabel(stage, 'time ↑').pos.set(-5, boxH + 0.6, 5);
+  const nowLabel = addLabel(stage, 'now', 'now');
+
+  // the "now" sheet: a quad that shears when tilted
+  const texCanvas = document.createElement('canvas');
+  texCanvas.width = texCanvas.height = 512;
+  const tex = new THREE.CanvasTexture(texCanvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 4;
+  const sheetGeom = new THREE.PlaneGeometry(10, 10).rotateX(-Math.PI / 2);
+  const sheet = new THREE.Mesh(sheetGeom, new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide, depthWrite: false }));
+  sheet.renderOrder = 3;
+  scene.add(sheet);
+  const sheetFrame = fatLines(stage, theme.now, 2.2, { order: 6 });
+
+  const pastClip = new THREE.Plane(), futClip = new THREE.Plane();
+
+  // ---- the 2D physics: elastic balls in a box, optional pull toward the South
+  function makeBall(r, birth, init) {
+    const color = theme.objs[colorIx++ % theme.objs.length];
+    return {
+      r, birth, init, color, rgb: hexToRgb(color),
+      xs: new Float32Array(K + 1), zs: new Float32Array(K + 1), vxs: new Float32Array(K + 1), vzs: new Float32Array(K + 1),
+      x: 0, z: 0, vx: 0, vz: 0, past: null, fut: null,
+    };
+  }
+  function record(b, k) { b.xs[k] = b.x; b.zs[k] = b.z; b.vxs[k] = b.vx; b.vzs[k] = b.vz; }
+  function begin(b) { b.x = b.init.x; b.z = b.init.z; b.vx = b.init.vx; b.vz = b.init.vz; }
+  function step(live) {
+    for (const b of live) {
+      if (L.south) b.vz += G * DT;
+      b.x += b.vx * DT;
+      b.z += b.vz * DT;
+      if (b.x < -HALF + b.r) { b.x = -HALF + b.r; b.vx = Math.abs(b.vx); }
+      else if (b.x > HALF - b.r) { b.x = HALF - b.r; b.vx = -Math.abs(b.vx); }
+      if (b.z < -HALF + b.r) { b.z = -HALF + b.r; b.vz = Math.abs(b.vz); }
+      else if (b.z > HALF - b.r) { b.z = HALF - b.r; b.vz = -Math.abs(b.vz); }
+    }
+    for (let i = 0; i < live.length; i++) {
+      for (let j = i + 1; j < live.length; j++) {
+        const a = live[i], c = live[j];
+        const dx = c.x - a.x, dz = c.z - a.z, R = a.r + c.r, d2 = dx * dx + dz * dz;
+        if (d2 >= R * R || d2 < 1e-12) continue;
+        const d = Math.sqrt(d2), nx = dx / d, nz = dz / d, ma = a.r * a.r, mc = c.r * c.r, ov = R - d;
+        a.x -= (nx * ov * mc) / (ma + mc); a.z -= (nz * ov * mc) / (ma + mc);
+        c.x += (nx * ov * ma) / (ma + mc); c.z += (nz * ov * ma) / (ma + mc);
+        const rv = (c.vx - a.vx) * nx + (c.vz - a.vz) * nz;
+        if (rv < 0) {
+          const imp = (-2 * rv) / (1 / ma + 1 / mc);
+          a.vx -= (imp * nx) / ma; a.vz -= (imp * nz) / ma;
+          c.vx += (imp * nx) / mc; c.vz += (imp * nz) / mc;
+        }
+      }
+    }
+  }
+  // Re-runs history from sample k0 onward; everything before k0 is kept.
+  function simulate(k0) {
+    const live = [];
+    for (const b of L.balls) {
+      if (b.birth < k0) { b.x = b.xs[k0]; b.z = b.zs[k0]; b.vx = b.vxs[k0]; b.vz = b.vzs[k0]; live.push(b); }
+      else if (b.birth === k0) { begin(b); record(b, k0); live.push(b); }
+    }
+    for (let k = k0; k < K; k++) {
+      for (let s = 0; s < SUB; s++) step(live);
+      for (const b of live) record(b, k + 1);
+      for (const b of L.balls) if (b.birth === k + 1) { begin(b); record(b, k + 1); live.push(b); }
+    }
+  }
+
+  // ---- worldtubes: horizontal rings stacked up the time axis, so every slice is an exact circle
+  const RING = 28, cosT = [], sinT = [];
+  for (let m = 0; m < RING; m++) { cosT.push(Math.cos((m / RING) * Math.PI * 2)); sinT.push(Math.sin((m / RING) * Math.PI * 2)); }
+  function tubeGeometry(b) {
+    const k0 = b.birth, rings = K - k0 + 1;
+    const nv = rings * RING + 2 * (RING + 1);
+    const pos = new Float32Array(nv * 3), nor = new Float32Array(nv * 3), idx = [];
+    let v = 0;
+    const put = (x, y, z, nx, ny, nz) => {
+      pos[3 * v] = x; pos[3 * v + 1] = y; pos[3 * v + 2] = z;
+      nor[3 * v] = nx; nor[3 * v + 1] = ny; nor[3 * v + 2] = nz;
+      return v++;
+    };
+    for (let k = k0; k <= K; k++) {
+      const y = (k / REC) * S;
+      for (let m = 0; m < RING; m++) put(b.xs[k] + b.r * cosT[m], y, b.zs[k] + b.r * sinT[m], cosT[m], 0, sinT[m]);
+    }
+    for (let k = 0; k < rings - 1; k++) {
+      for (let m = 0; m < RING; m++) {
+        const a = k * RING + m, q = k * RING + ((m + 1) % RING), c = a + RING, d = q + RING;
+        idx.push(a, c, d, a, d, q);
+      }
+    }
+    for (const [k, ny] of [[k0, -1], [K, 1]]) {
+      const y = (k / REC) * S;
+      const center = put(b.xs[k], y, b.zs[k], 0, ny, 0);
+      const start = v;
+      for (let m = 0; m < RING; m++) put(b.xs[k] + b.r * cosT[m], y, b.zs[k] + b.r * sinT[m], 0, ny, 0);
+      for (let m = 0; m < RING; m++) {
+        const p = start + m, q = start + ((m + 1) % RING);
+        if (ny > 0) idx.push(center, q, p); else idx.push(center, p, q);
+      }
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    g.setAttribute('normal', new THREE.BufferAttribute(nor, 3));
+    g.setIndex(idx);
+    g.computeBoundingSphere();
+    return g;
+  }
+  function disposeBall(b) {
+    if (!b.past) return;
+    scene.remove(b.past, b.fut);
+    b.past.geometry.dispose();
+    b.past.material.dispose();
+    b.fut.material.dispose();
+    b.past = b.fut = null;
+  }
+  function buildBall(b) {
+    const g = tubeGeometry(b);
+    b.past = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: b.color, roughness: 0.55, clippingPlanes: [pastClip] }));
+    b.fut = new THREE.Mesh(g, new THREE.MeshStandardMaterial({
+      color: b.color, roughness: 0.6, transparent: true, opacity: 0.2, depthWrite: false, clippingPlanes: [futClip],
+    }));
+    b.fut.renderOrder = 4;
+    scene.add(b.past, b.fut);
+  }
+  function rebuild() { for (const b of L.balls) { disposeBall(b); buildBall(b); } }
+
+  function newHistory() {
+    for (const b of L.balls) disposeBall(b);
+    L.balls = [];
+    let tries = 0;
+    while (L.balls.length < 6 && tries++ < 600) {
+      const r = rand(0.4, 0.78), x = rand(-HALF + r, HALF - r), z = rand(-HALF + r, HALF - r);
+      if (L.balls.some(b => Math.hypot(b.init.x - x, b.init.z - z) < b.r + r + 0.2)) continue;
+      const a = rand(0, Math.PI * 2), sp = rand(1.0, 1.9);
+      L.balls.push(makeBall(r, 0, { x, z, vx: Math.cos(a) * sp, vz: Math.sin(a) * sp }));
+    }
+    simulate(0);
+    rebuild();
+  }
+
+  // ---- where the (possibly tilted) slice meets each ball's worldtube
+  const slope = () => Math.tan(L.tilt);
+  function caught(b) {
+    const m = slope();
+    const g = k => k / REC - L.now - (m * b.xs[k]) / S;
+    let gp = g(b.birth);
+    if (gp > 0) return null;
+    for (let k = b.birth + 1; k <= K; k++) {
+      const gk = g(k);
+      if (gk >= 0) {
+        const f = gp / (gp - gk);
+        return { t: (k - 1 + f) / REC, x: lerp(b.xs[k - 1], b.xs[k], f), z: lerp(b.zs[k - 1], b.zs[k], f) };
+      }
+      gp = gk;
+    }
+    return null;
+  }
+
+  function drawFlat(ctx, W, forTex) {
+    const k = W / 10, X = v => (v + HALF) * k, d = forTex ? W / 512 : dpr();
+    ctx.clearRect(0, 0, W, W);
+    if (forTex) { ctx.globalAlpha = 0.12; ctx.fillStyle = theme.now; ctx.fillRect(0, 0, W, W); }
+    else { ctx.fillStyle = theme.flat; ctx.fillRect(0, 0, W, W); }
+    ctx.globalAlpha = forTex ? 0.25 : 1;
+    ctx.strokeStyle = forTex ? theme.now : theme.grid;
+    ctx.lineWidth = d;
+    ctx.beginPath();
+    for (let i = 1; i < 10; i++) { ctx.moveTo(i * k, 0); ctx.lineTo(i * k, W); ctx.moveTo(0, i * k); ctx.lineTo(W, i * k); }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    if (!forTex) {
+      ctx.fillStyle = theme.muted;
+      ctx.font = `500 ${11 * d}px "JetBrains Mono", ui-monospace, monospace`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillText('N', W / 2, 5 * d);
+      ctx.textBaseline = 'bottom';
+      ctx.fillText('S', W / 2, W - 5 * d);
+    }
+    const tilted = Math.abs(L.tilt) > 1e-3;
+    for (const b of L.balls) {
+      const c = caught(b);
+      if (!c) continue;
+      ctx.beginPath();
+      ctx.arc(X(c.x), X(c.z), b.r * k, 0, Math.PI * 2);
+      ctx.fillStyle = b.color;
+      ctx.fill();
+      ctx.strokeStyle = theme.now;
+      ctx.lineWidth = 2 * d;
+      ctx.stroke();
+      if (tilted && !forTex) {
+        ctx.fillStyle = theme.ink;
+        ctx.font = `500 ${10.5 * d}px "JetBrains Mono", ui-monospace, monospace`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(`${c.t.toFixed(1)}s`, X(c.x), X(c.z));
+      }
+    }
+  }
+
+  function updateSlice() {
+    const m = slope(), Y = L.now * S, len = Math.hypot(m, 1);
+    pastClip.normal.set(m / len, -1 / len, 0);
+    pastClip.constant = Y / len;
+    futClip.normal.set(-m / len, 1 / len, 0);
+    futClip.constant = -Y / len;
+    const p = sheetGeom.attributes.position;
+    for (let i = 0; i < p.count; i++) p.setY(i, Y + m * p.getX(i));
+    p.needsUpdate = true;
+    sheetGeom.computeBoundingSphere();
+    const y0 = Y - 5 * m, y1 = Y + 5 * m;
+    sheetFrame.set([-5, y0, -5, 5, y1, -5, 5, y1, -5, 5, y1, 5, 5, y1, 5, -5, y0, 5, -5, y0, 5, -5, y0, -5]);
+    nowLabel.pos.set(5, y1, 5);
+    nowLabel.el.textContent = `now · ${L.now.toFixed(2)} s`;
+    nowSlider.value = L.now;
+    nowOut.textContent = `${L.now.toFixed(2)} s`;
+  }
+
+  // ---- controls
+  const setPlaying = p => { L.playing = p; playBtn.textContent = p ? 'Pause' : 'Play'; };
+  playBtn.addEventListener('click', () => setPlaying(!L.playing));
+  nowSlider.addEventListener('input', () => { setPlaying(false); L.now = +nowSlider.value; });
+  tiltSlider.addEventListener('input', () => {
+    const deg = +tiltSlider.value;
+    L.tilt = (deg * Math.PI) / 180;
+    tiltOut.textContent = `${deg > 0 ? '+' : deg < 0 ? '−' : ''}${Math.abs(deg)}°`;
+    status.textContent = deg === 0
+      ? 'The slice is level again: every ball is caught at the same moment.'
+      : 'Tilted slice: each ball is caught at its own moment, labeled in seconds.';
+  });
+  southBtn.addEventListener('click', () => {
+    L.south = !L.south;
+    southBtn.setAttribute('aria-pressed', String(L.south));
+    simulate(0);
+    rebuild();
+    status.textContent = L.south
+      ? 'South pull on. Same starting positions, so the whole history bends toward the South.'
+      : 'South pull off. History recalculated from the same starting positions.';
+  });
+  $('#loaf-new').addEventListener('click', () => {
+    newHistory();
+    status.textContent = 'A new history, with six balls at random starting positions.';
+  });
+  panel.addEventListener('pointerdown', e => {
+    const r = panel.getBoundingClientRect();
+    const x = ((e.clientX - r.left) / r.width) * 10 - 5, z = ((e.clientY - r.top) / r.height) * 10 - 5;
+    const rad = 0.5;
+    if (Math.abs(x) > HALF - rad || Math.abs(z) > HALF - rad) { status.textContent = 'Too close to the wall. Click a bit further in.'; return; }
+    const tb = L.now + (slope() * x) / S, kb = Math.round(tb * REC);
+    if (kb < 0 || kb >= K) { status.textContent = 'That part of the slice lies outside the 12 seconds of recorded history.'; return; }
+    if (L.balls.length >= MAXB) { status.textContent = 'This Flatland is full. Press New history to start over.'; return; }
+    for (const b of L.balls) {
+      if (b.birth > kb) continue;
+      if (Math.hypot(b.xs[kb] - x, b.zs[kb] - z) < b.r + rad + 0.05) { status.textContent = 'Another ball is already there at this moment. Try an empty spot.'; return; }
+    }
+    const a = rand(0, Math.PI * 2), sp = rand(1.2, 2.0);
+    const nb = makeBall(rad, kb, { x, z, vx: Math.cos(a) * sp, vz: Math.sin(a) * sp });
+    L.balls.push(nb);
+    simulate(kb);
+    rebuild();
+    status.textContent = `Added a ball at ${(kb / REC).toFixed(2)} s. Its tube starts there, and everything after that moment was recalculated.`;
+  });
+
+  themeHooks.push(() => {
+    boxMat.color.set(theme.rule);
+    baseGrid.material.color.set(theme.rule);
+    sheetFrame.material.color.set(theme.now);
+  });
+
+  newHistory();
+  setPlaying(L.playing);
+  const tctx = texCanvas.getContext('2d');
+  stage.tick = dt => {
+    if (L.playing) {
+      L.now += dt;
+      if (L.now > T) L.now = 0;
+    }
+    updateSlice();
+    drawFlat(tctx, texCanvas.width, true);
+    tex.needsUpdate = true;
+    const [W] = fitCanvas(panel);
+    if (W) drawFlat(panel.getContext('2d'), W, false);
+    stage.render();
+  };
+}
+
+// ================================================================ PLATE III · 4D objects through our space
+function initHyper() {
+  const el = $('#hyper-view');
+  const stage = makeStage(el, { cam: [4.6, 2.9, 6.0], target: [0, -0.2, 0], min: 4, max: 16 });
+  if (!stage) return;
+  const { scene } = stage;
+  const nameEl = $('#hyper-name'), countsEl = $('#hyper-counts'), gauge = $('#hyper-gauge');
+  const wSlider = $('#hyper-w'), wOut = $('#hyper-w-out'), playBtn = $('#hyper-play');
+  const rotSet = $('#hyper-rot'), rotNote = $('#hyper-rot-note'), tumbleBtn = $('#hyper-tumble'), shadowBtn = $('#hyper-shadow');
+  const rotInputs = ['xw', 'yw', 'zw'].map(id => [$('#rot-' + id), $('#rot-' + id + '-out')]);
+  const DEG = Math.PI / 180, WMAX = 2.3, FLOOR = -2.0, BALL_R = 0.5;
+
+  addLights(scene, false);
+  const grid = new THREE.GridHelper(8, 8, theme.rule, theme.rule);
+  grid.position.y = FLOOR;
+  grid.material.transparent = true;
+  grid.material.opacity = 0.6;
+  scene.add(grid);
+
+  // ---- 4D shapes
+  function polytope(verts, scale) {
+    const V = verts.map(v => v.map(c => c * scale));
+    const d2 = (a, b) => a.reduce((s, c, i) => s + (c - b[i]) ** 2, 0);
+    let min = Infinity;
+    for (let i = 0; i < V.length; i++) for (let j = i + 1; j < V.length; j++) min = Math.min(min, d2(V[i], V[j]));
+    const E = [];
+    for (let i = 0; i < V.length; i++) for (let j = i + 1; j < V.length; j++) if (Math.abs(d2(V[i], V[j]) - min) < 1e-6 * min) E.push([i, j]);
+    return { kind: 'poly', V, E };
+  }
+  const tessV = [];
+  for (let i = 0; i < 16; i++) tessV.push([i & 1 ? 1 : -1, i & 2 ? 1 : -1, i & 4 ? 1 : -1, i & 8 ? 1 : -1]);
+  const c16V = [];
+  for (let a = 0; a < 4; a++) for (const s of [1, -1]) { const v = [0, 0, 0, 0]; v[a] = s; c16V.push(v); }
+  const r5 = 1 / Math.sqrt(5);
+  const c5V = [[1, 1, 1, -r5], [1, -1, -1, -r5], [-1, 1, -1, -r5], [-1, -1, 1, -r5], [0, 0, 0, 4 * r5]];
+  const c24V = [];
+  for (let a = 0; a < 4; a++) for (let b = a + 1; b < 4; b++) for (const sa of [1, -1]) for (const sb of [1, -1]) {
+    const v = [0, 0, 0, 0]; v[a] = sa; v[b] = sb; c24V.push(v);
+  }
+  const SHAPES = {
+    glome: { kind: 'glome', R: 1.8, color: 3 },
+    tesseract: { ...polytope(tessV, 0.85), color: 1 },
+    cell16: { ...polytope(c16V, 1.75), color: 2 },
+    cell5: { ...polytope(c5V, 0.95), color: 0 },
+    cell24: { ...polytope(c24V, 1.2), color: 4 },
+    thrown: { kind: 'tube', color: 5 },
+  };
+  // Slices are named by their faces: "3x4 6x4" means four triangles and four hexagons.
+  const NAMES = {
+    '3x4': 'tetrahedron', '3x8': 'octahedron', '4x6': 'box', '3x2 4x3': 'triangular prism',
+    '3x4 4x1': 'square pyramid', '3x6': 'triangular bipyramid', '3x4 6x4': 'truncated tetrahedron',
+    '4x6 6x2': 'hexagonal prism', '4x5 5x2': 'pentagonal prism', '3x8 4x6': 'cuboctahedron',
+    '4x6 6x8': 'truncated octahedron', '4x12': 'rhombic dodecahedron', '3x4 4x3 6x1': 'triangular cupola',
+  };
+  const A2 = Math.atan(Math.SQRT1_2), A3 = Math.PI / 6;
+  // Exact angles, so special slices land exactly on vertices instead of a hair beside them.
+  const POSES = { straight: [0, 0, 0], face: [0, 0, Math.PI / 4], edge: [0, Math.PI / 4, A2], corner: [Math.PI / 4, A2, A3] };
+  function describeHull(g) {
+    const p = g.attributes.position.array, faces = [], verts = [];
+    const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3();
+    const e1 = new THREE.Vector3(), e2 = new THREE.Vector3(), n = new THREE.Vector3();
+    const addUnique = (list, v) => { for (const q of list) if (q.distanceToSquared(v) < 1e-8) return; list.push(v.clone()); };
+    for (let i = 0; i < p.length; i += 9) {
+      a.fromArray(p, i); b.fromArray(p, i + 3); c.fromArray(p, i + 6);
+      n.crossVectors(e1.subVectors(b, a), e2.subVectors(c, a));
+      const len = n.length();
+      if (len < 1e-10) continue;
+      n.divideScalar(len);
+      const d = n.dot(a);
+      let f = faces.find(q => q.n.dot(n) > 0.99995 && Math.abs(q.d - d) < 1e-4);
+      if (!f) { f = { n: n.clone(), d, vs: [], area: 0 }; faces.push(f); }
+      f.area += len / 2;
+      for (const v of [a, b, c]) { addUnique(f.vs, v); addUnique(verts, v); }
+    }
+    const sig = {};
+    for (const f of faces) sig[f.vs.length] = (sig[f.vs.length] || 0) + 1;
+    const key = Object.keys(sig).sort((x, y) => x - y).map(k => `${k}x${sig[k]}`).join(' ');
+    const F = faces.length, V = verts.length, E = faces.reduce((s, f) => s + f.vs.length, 0) / 2;
+    let name = NAMES[key] || `${F}-faced polyhedron`;
+    if (key === '4x6') {
+      const areas = faces.map(f => f.area);
+      name = Math.max(...areas) - Math.min(...areas) < 0.01 * Math.max(...areas) ? 'cube' : 'box';
+    }
+    return { name, V, E, F };
+  }
+  // A ball thrown along x that bounces on the floor; w plays the part of time.
+  function thrownAt(w) {
+    const P = 1.5, u = ((((w + 0.4) % P) + P) % P) / P;
+    return [1.25 * w, FLOOR + BALL_R + 2.3 * 4 * u * (1 - u), 0];
+  }
+
+  const H = { shape: 'tesseract', w: -1.2, dir: 1, playing: !reduceMotion, ang: POSES.corner.slice(), tumble: false, shadow: false, R: null };
+  let dirty = true;
+
+  // ---- scene objects
+  const solidMat = new THREE.MeshStandardMaterial({ color: theme.objs[1], roughness: 0.42, metalness: 0.04, flatShading: true, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
+  const hullMesh = new THREE.Mesh(new THREE.BufferGeometry(), solidMat);
+  scene.add(hullMesh);
+  const edgesBack = fatLines(stage, theme.now, 1.4, { depthTest: false, opacity: 0.32, order: 5 });
+  const edgesFront = fatLines(stage, theme.now, 2.6, { order: 6 });
+  const glomeMesh = new THREE.Mesh(new THREE.SphereGeometry(1, 64, 32), new THREE.MeshStandardMaterial({ color: theme.objs[3], roughness: 0.4 }));
+  scene.add(glomeMesh);
+  const ballMesh = new THREE.Mesh(new THREE.SphereGeometry(BALL_R, 48, 24), new THREE.MeshStandardMaterial({ color: theme.objs[5], roughness: 0.45 }));
+  scene.add(ballMesh);
+  const ballShadow = new THREE.Mesh(new THREE.CircleGeometry(BALL_R * 0.9, 32), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.12, depthWrite: false }));
+  ballShadow.rotation.x = -Math.PI / 2;
+  scene.add(ballShadow);
+
+  // 4D shadows: a perspective projection of the whole object into our space
+  const shadowMat = new THREE.LineBasicMaterial({ color: theme.muted, transparent: true, opacity: 0.55 });
+  const shadowPos = new THREE.BufferAttribute(new Float32Array(96 * 2 * 3), 3);
+  const shadowGeo = new THREE.BufferGeometry().setAttribute('position', shadowPos);
+  const shadowLines = new THREE.LineSegments(shadowGeo, shadowMat);
+  shadowLines.frustumCulled = false;
+  scene.add(shadowLines);
+  const ghostMat = new THREE.MeshBasicMaterial({ color: theme.muted, transparent: true, opacity: 0.1, depthWrite: false });
+  const shadowGlome = new THREE.Mesh(new THREE.SphereGeometry(SHAPES.glome.R, 48, 24), ghostMat);
+  scene.add(shadowGlome);
+  const trail = new THREE.Group();
+  for (let w = -WMAX; w <= WMAX + 1e-6; w += 0.23) {
+    const m = new THREE.Mesh(new THREE.SphereGeometry(BALL_R, 24, 12), ghostMat);
+    m.position.set(...thrownAt(w));
+    trail.add(m);
+  }
+  scene.add(trail);
+
+  function rot(p, i, j, t) {
+    const c = Math.cos(t), s = Math.sin(t), a = p[i], b = p[j];
+    p[i] = a * c - b * s;
+    p[j] = a * s + b * c;
+  }
+  const rotate4 = v => { const p = v.slice(); rot(p, 0, 3, H.ang[0]); rot(p, 1, 3, H.ang[1]); rot(p, 2, 3, H.ang[2]); return p; };
+
+  function crossSection(P) {
+    const R = P.V.map(rotate4), w0 = H.w, pts = [], eps = 1e-7;
+    const add = (x, y, z) => {
+      for (const q of pts) if (Math.abs(q.x - x) + Math.abs(q.y - y) + Math.abs(q.z - z) < 1e-4) return;
+      pts.push(new THREE.Vector3(x, y, z));
+    };
+    for (const v of R) if (Math.abs(v[3] - w0) < eps) add(v[0], v[1], v[2]);
+    for (const [i, j] of P.E) {
+      const a = R[i], b = R[j], da = a[3] - w0, db = b[3] - w0;
+      if ((da < -eps && db > eps) || (da > eps && db < -eps)) {
+        const t = da / (da - db);
+        add(a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1]), a[2] + t * (b[2] - a[2]));
+      }
+    }
+    return { R, pts };
+  }
+
+  function setReadout(name, counts) { nameEl.textContent = name; countsEl.textContent = counts; }
+
+  function update() {
+    dirty = false;
+    const P = SHAPES[H.shape];
+    hullMesh.visible = glomeMesh.visible = ballMesh.visible = ballShadow.visible = false;
+    edgesFront.visible = edgesBack.visible = false;
+    H.R = null;
+    if (P.kind === 'glome') {
+      const r2 = P.R * P.R - H.w * H.w;
+      if (r2 > 1e-5) {
+        const r = Math.sqrt(r2);
+        glomeMesh.scale.setScalar(r);
+        glomeMesh.visible = true;
+        setReadout('sphere', `radius ${r.toFixed(2)} (the hypersphere's radius is ${P.R.toFixed(2)})`);
+      } else {
+        setReadout('nothing', 'The hypersphere lies entirely to one side of our space.');
+      }
+    } else if (P.kind === 'tube') {
+      const [x, y, z] = thrownAt(H.w);
+      ballMesh.position.set(x, y, z);
+      ballShadow.position.set(x, FLOOR + 0.004, z);
+      ballMesh.visible = ballShadow.visible = true;
+      setReadout('one ordinary ball', `${(y - FLOOR - BALL_R).toFixed(2)} above the floor, x = ${fmtSigned(x)}`);
+    } else {
+      const { R, pts } = crossSection(P);
+      H.R = R;
+      let ok = false;
+      if (pts.length >= 4) {
+        try {
+          const g = new ConvexGeometry(pts);
+          if (g.attributes.position.count >= 12) {
+            hullMesh.geometry.dispose();
+            hullMesh.geometry = g;
+            const eg = new THREE.EdgesGeometry(g, 1);
+            const segs = eg.attributes.position.array;
+            eg.dispose();
+            edgesFront.set(segs);
+            edgesBack.set(segs);
+            const { name, V, E, F } = describeHull(g);
+            hullMesh.visible = true;
+            setReadout(name, `${V} vertices · ${E} edges · ${F} faces`);
+            ok = true;
+          } else {
+            g.dispose();
+          }
+        } catch (_) { /* a flat or degenerate cut */ }
+      }
+      if (!ok) {
+        const ws = R.map(v => v[3]);
+        const outside = H.w <= Math.min(...ws) + 1e-6 || H.w >= Math.max(...ws) - 1e-6;
+        setReadout(outside ? 'nothing' : 'a flat sliver', outside ? 'The object lies entirely to one side of our space.' : 'Our space is just grazing a face of the object.');
+      }
+    }
+    updateShadow();
+    drawGauge();
+    wSlider.value = H.w;
+    wOut.textContent = fmtSigned(H.w);
+  }
+
+  function updateShadow() {
+    const P = SHAPES[H.shape];
+    shadowLines.visible = H.shadow && P.kind === 'poly';
+    shadowGlome.visible = H.shadow && P.kind === 'glome';
+    trail.visible = H.shadow && P.kind === 'tube';
+    if (!shadowLines.visible) return;
+    const R = H.R, D = 5, arr = shadowPos.array;
+    let n = 0;
+    for (const [i, j] of P.E) {
+      for (const v of [R[i], R[j]]) {
+        const s = D / (D - v[3]);
+        arr[n++] = v[0] * s; arr[n++] = v[1] * s; arr[n++] = v[2] * s;
+      }
+    }
+    shadowPos.needsUpdate = true;
+    shadowGeo.setDrawRange(0, n / 3);
+  }
+
+  function drawGauge() {
+    const [W, Hh] = fitCanvas(gauge);
+    if (!W) return;
+    const ctx = gauge.getContext('2d'), d = dpr(), P = SHAPES[H.shape];
+    const pad = 14 * d, y0 = Hh * 0.5, X = w => pad + ((w + 2.4) / 4.8) * (W - 2 * pad);
+    const col = theme.objs[P.color];
+    ctx.clearRect(0, 0, W, Hh);
+    ctx.strokeStyle = theme.rule;
+    ctx.lineWidth = d;
+    ctx.beginPath();
+    ctx.moveTo(X(-2.4), y0); ctx.lineTo(X(2.4), y0);
+    ctx.stroke();
+    ctx.fillStyle = theme.muted;
+    ctx.font = `${10 * d}px "JetBrains Mono", ui-monospace, monospace`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    for (let t = -2; t <= 2; t++) {
+      ctx.beginPath(); ctx.moveTo(X(t), y0 + 6 * d); ctx.lineTo(X(t), y0 + 10 * d); ctx.stroke();
+      ctx.fillText(t === 0 ? '0' : fmtSigned(t, 0), X(t), y0 + 13 * d);
+    }
+    let lo, hi;
+    if (P.kind === 'glome') { lo = -P.R; hi = P.R; }
+    else if (P.kind === 'tube') { lo = -2.4; hi = 2.4; }
+    else { const ws = H.R.map(v => v[3]); lo = Math.min(...ws); hi = Math.max(...ws); }
+    ctx.globalAlpha = 0.35;
+    ctx.strokeStyle = col;
+    ctx.lineWidth = 9 * d;
+    ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(X(lo), y0); ctx.lineTo(X(hi), y0); ctx.stroke();
+    ctx.lineCap = 'butt';
+    ctx.globalAlpha = 0.75;
+    ctx.fillStyle = col;
+    if (H.R) for (const v of H.R) { ctx.beginPath(); ctx.arc(X(v[3]), y0, 2.6 * d, 0, Math.PI * 2); ctx.fill(); }
+    ctx.globalAlpha = 1;
+    const sx = X(H.w);
+    ctx.strokeStyle = theme.now;
+    ctx.lineWidth = 2 * d;
+    ctx.beginPath(); ctx.moveTo(sx, 12 * d); ctx.lineTo(sx, y0 + 8 * d); ctx.stroke();
+    ctx.fillStyle = theme.now;
+    ctx.textBaseline = 'top';
+    ctx.textAlign = sx < W * 0.15 ? 'left' : sx > W * 0.85 ? 'right' : 'center';
+    ctx.font = `500 ${10 * d}px "JetBrains Mono", ui-monospace, monospace`;
+    ctx.fillText('our space', sx, 0);
+  }
+
+  // ---- controls
+  function syncRotInputs() {
+    rotInputs.forEach(([inp, out], i) => {
+      const deg = ((H.ang[i] / DEG) % 360 + 360) % 360;
+      inp.value = deg;
+      out.textContent = `${Math.round(deg)}°`;
+    });
+  }
+  function setShape(name) {
+    H.shape = name;
+    const P = SHAPES[name];
+    solidMat.color.set(theme.objs[P.color]);
+    const rotatable = P.kind === 'poly';
+    rotSet.disabled = !rotatable;
+    rotNote.hidden = rotatable;
+    rotNote.textContent = P.kind === 'glome'
+      ? 'Turning a hypersphere changes nothing, just as turning a ball does not.'
+      : "This tube's fourth direction stands for time. Turning it in 4D would mix time with space, so it is fixed here.";
+    if (!rotatable) setTumble(false);
+    dirty = true;
+  }
+  function setTumble(on) {
+    H.tumble = on;
+    tumbleBtn.setAttribute('aria-pressed', String(on));
+    tumbleBtn.setAttribute('aria-checked', String(on));
+  }
+  const setPlaying = p => { H.playing = p; playBtn.textContent = p ? 'Pause' : 'Play'; };
+  const shapeGroup = $('#hyper-shapes');
+  shapeGroup.addEventListener('click', e => {
+    const b = e.target.closest('[data-shape]');
+    if (!b) return;
+    setRadio(shapeGroup, b);
+    setShape(b.dataset.shape);
+  });
+  rotInputs.forEach(([inp, out], i) => inp.addEventListener('input', () => {
+    setTumble(false);
+    H.ang[i] = +inp.value * DEG;
+    out.textContent = `${Math.round(+inp.value)}°`;
+    dirty = true;
+  }));
+  $$('[data-pose]', rotSet).forEach(b => b.addEventListener('click', () => {
+    setTumble(false);
+    H.ang = POSES[b.dataset.pose].slice();
+    syncRotInputs();
+    dirty = true;
+  }));
+  tumbleBtn.addEventListener('click', () => setTumble(!H.tumble));
+  shadowBtn.addEventListener('click', () => {
+    H.shadow = !H.shadow;
+    shadowBtn.setAttribute('aria-pressed', String(H.shadow));
+    dirty = true;
+  });
+  playBtn.addEventListener('click', () => setPlaying(!H.playing));
+  wSlider.addEventListener('input', () => { setPlaying(false); H.w = +wSlider.value; dirty = true; });
+
+  themeHooks.push(() => {
+    grid.material.color.set(theme.rule);
+    edgesFront.material.color.set(theme.now);
+    edgesBack.material.color.set(theme.now);
+    shadowMat.color.set(theme.muted);
+    ghostMat.color.set(theme.muted);
+    dirty = true;
+  });
+
+  setShape('tesseract');
+  setPlaying(H.playing);
+  syncRotInputs();
+  update();
+  new ResizeObserver(() => drawGauge()).observe(gauge);
+
+  stage.tick = dt => {
+    if (H.playing) {
+      H.w += H.dir * dt * 0.5;
+      if (H.w > WMAX) { H.w = WMAX; H.dir = -1; }
+      if (H.w < -WMAX) { H.w = -WMAX; H.dir = 1; }
+      dirty = true;
+    }
+    if (H.tumble) {
+      H.ang[0] += dt * 0.23; H.ang[1] += dt * 0.15; H.ang[2] += dt * 0.19;
+      syncRotInputs();
+      dirty = true;
+    }
+    if (dirty) update();
+    stage.render();
+  };
+}
+
+// ---------------------------------------------------------------- start
+for (const init of [initLab, initLoaf, initHyper]) {
+  try { init(); } catch (err) { console.error(err); }
+}
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000);
+  last = now;
+  for (const s of stages) if (s.visible && s.tick) s.tick(dt);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
